@@ -1,0 +1,53 @@
+EXECUTABLE SCRIPTS
+
+# to append the result in the txt file 
+echo " this is my first job" > /tmp/first.txt
+
+# to run the file from the jenkins 
+bash /tmp/sample.sh
+
+=========================================================
+# to copy the data which generated while build is completed to remote server
+============================================================
+
+#generate the ssh key in the jenkins server
+ssh-keygen
+
+# start the agent
+eval $(ssh-agent -s)
+
+# create a new pem key in the server, to connect to the remote server
+vi firstkeypair.pem
+
+# copy paste the pem from your local and change the permission
+chmod 400 firstkeypair.pem
+ssh -add firstkeypair.pem
+
+cd /root/.ssh/
+ssh-copy-id -i id_rsa.pub ec2-user@ ip of testserver
+
+---------------------------------
+install plugin publish over ssh
+
+#in jenkins manage->system->publish over ssh->paste the private key of the jenkins server 
+1) in ssh server
+    give the details of the other server (private hostname)
+    and save it
+
+#to change the port number of the junkins 
+sudo vi /etc/sysconfig/jenkins
+
+ if not there add these 
+ # Jenkins default configuration
+JENKINS_USER="jenkins"
+JENKINS_PORT="8082"           # change port here
+JENKINS_LISTEN_ADDRESS="0.0.0.0"   # allow connections from anywhere
+JENKINS_ARGS=""
+
+and restart 
+sudo systemctl daemon-reexec
+sudo systemctl restart jenkins
+sudo systemctl status jenkins
+
+ 
+    
